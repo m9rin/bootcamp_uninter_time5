@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop", "feature/**"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  testar-e-buildar-imagem-prod:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: medalerta_test
+          MYSQL_USER: medalerta
+          MYSQL_PASSWORD: medalerta
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -umedalerta -pmedalerta --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=20s
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: medalerta_test
+      DB_USERNAME: medalerta
+      DB_PASSWORD: medalerta
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Aguardar MySQL
+        run: |
+          for i in {1..30}; do
+            nc -z 127.0.0.1 3306 && echo "MySQL pronto" && exit 0
+            echo "Aguardando MySQL..."
+            sleep 2
+          done
+          echo "MySQL não ficou pronto a tempo"
+          exit 1
+
+      - name: Executar testes
+        run: mvn -B test -Dspring.profiles.active=test
+
+      - name: Construir imagem de produção
+        run: docker build --target prod -t medalerta:prod .

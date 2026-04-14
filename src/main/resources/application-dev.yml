@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:db}:${DB_PORT:3306}/${DB_NAME:medalerta}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:medalerta_user}
+    password: ${DB_PASSWORD:medalerta_pass}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

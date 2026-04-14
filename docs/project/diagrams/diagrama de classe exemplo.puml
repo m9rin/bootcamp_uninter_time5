@@ -1,0 +1,26 @@
+@startuml class_diagram
+!includeurl https://raw.githubusercontent.com/guipatriota/dracula-plantuml-theme/refs/heads/main/theme/theme.puml
+title Core Classes
+
+class Wing
+class Room
+class Hall
+class Closet
+class Drawer
+class Engram
+class Tunnel
+class Hippocampus
+class ThalamusGateway
+class CortexIndex
+
+Wing "1" -- "*" Room
+Room "*" -- "1" Hall
+Room "1" -- "*" Engram
+Engram "1" -- "1" Drawer
+Engram "0..1" -- "1" Closet
+Room "*" -- "*" Tunnel
+Hippocampus --> Engram
+ThalamusGateway --> CortexIndex
+ThalamusGateway --> Engram
+
+@enduml

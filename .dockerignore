@@ -1,0 +1,10 @@
+.git
+.github
+.devcontainer
+.vscode
+target
+node_modules
+.env
+Dockerfile*
+docker-compose*
+README.md

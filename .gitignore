@@ -1,0 +1,28 @@
+# Build (Maven/Java)
+target/
+*.log
+
+# Environment variables (NUNCA versionar)
+.env
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker (opcional ignorar arquivos locais)
+docker-compose.override.yml
+
+# Node (caso use frontend no futuro)
+node_modules/
+
+# Temporary files
+*.tmp
+*.swp
+
+# Logs
+logs/
