@@ -1,3 +1,4 @@
+
 {
   "name": "MedAlerta Java DevContainer",
   "dockerComposeFile": "../docker-compose.yml",
