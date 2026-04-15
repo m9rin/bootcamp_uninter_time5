@@ -24,41 +24,40 @@ USE MedAlerta;
 
 
 CREATE TABLE Usuario (
-	idUsuario int primary key not null,
-	nome varchar(15) not null,
-	telefone int (14) not null,
-	email varchar (25) not null,
-	endereço varchar (20),
-	endereçoRua varchar (20),
-	endereçoNumero varchar (20),
-	endereçoComp varchar (20),
-	endereçoBairro varchar (20),
-	endereçoCEP varchar (20),
-	endereçoCidade varchar (20),
-	endereçoEstado varchar (20)
+	IdUsuario INT PRIMARY KEY NOT NULL,
+	Nome VARCHAR (100) NOT NULL,
+	Telefone VARCHAR (10) NOT NULL,
+	Email VARCHAR (100) NOT NULL,
+	EnderecoRua VARCHAR (100),
+	EnderecoNumero INT (10),
+	EnderecoComplemento VARCHAR (50),
+	EnderecoBairro VARCHAR (50),
+	EnderecoCEP VARCHAR (10),
+	EnderecoCidade VARCHAR (50),
+	EnderecoEstado CHAR (02)
 );
 
-CREATE TABLE usuarioMedicamento(
-	IdUsuario int not null,
-	IdMedicamento int not null,
-	horarioUso time not null,
-	frequenciaUso varchar(50),
-	dosagem varchar(50),
-	dataHOrarioAlerta datetime not null,
-	statusAlerta enum('emitido', 'Nao emitido');
-	dataHorarioConsumo datetime,
-	confirmacaoConsumo enum('sim', 'nao') not null,
-	primary key (IdUsuario, IdMedcimaento),
-	foreign key (IdUsuario) references (IdUsuario),
-	foreign key (IdMedcimaento) references Medicamento (IdMedicamento)
+CREATE TABLE UsuarioMedicamento(
+	IdUsuario INT NOT NULL,
+	IdMedicamento INT NOT NULL,
+	HorarioUso time NOT NULL,
+	FrequenciaUso VARCHAR(50),
+	Dosagem VARCHAR(50),
+	DataHOrarioAlerta datetime NOT NULL,
+	StatusAlerta ENUM('emitido', 'Nao emitido');
+	DataHorarioConsumo datetime,
+	ConfirmacaoConsumo enum('sim', 'nao') NOT NULL,
+	PRIMARY KEY (IdUsuario, IdMedcimaento),
+	FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario),
+	FOREIGN KEY (IdMedcimaento) REFERENCES Medicamento(IdMedicamento)
 );
 
 CREATE TABLE Medicamento (
-	IdMedcimaento int primary key,
-	nomeComercial varchar(100),
-	nomeGenerico varchar(100),
-	quantidade enum('unidade', 'ml'),
-	formaUso varchar(100),
-	observacao varchar(200)	
+	IdMedcimaento INT primary key,
+	NomeComercial VARCHAR(100),
+	NomeGenerico VARCHAR(100),
+	Quantidade ENUM('unidade', 'ml'),
+	FormaUso VARCHAR(100),
+	Observacao VARCHAR(200)	
 );
 
