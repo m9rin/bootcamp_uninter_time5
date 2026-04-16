@@ -1,0 +1,63 @@
+package br.uninter.medalerta.model;
+
+import jakarta.persistence.*;
+import java.time.LocalTime;
+import java.util.List;
+
+@Entity
+@Table(name = "Tratamento")
+public class Tratamento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "IdTratamento")
+    private Integer idTratamento;
+
+    @ManyToOne
+    @JoinColumn(name = "IdUsuario", nullable = false)
+    private Usuario usuario;
+
+    @Column(name = "HorarioUso")
+    private LocalTime horarioUso;
+
+    @Column(name = "FrequenciaUso", length = 50)
+    private String frequenciaUso;
+
+    public Integer getIdTratamento() { 
+        return idTratamento; 
+        }
+    public void setIdTratamento(Integer idTratamento) { 
+        this.idTratamento = idTratamento; 
+        }
+
+    public Usuario getUsuario() { 
+        return usuario; 
+        }
+    public void setUsuario(Usuario usuario) { 
+        this.usuario = usuario; 
+        }
+
+    public LocalTime getHorarioUso() {
+         return horarioUso; 
+         }
+    public void setHorarioUso(LocalTime horarioUso) { 
+        this.horarioUso = horarioUso; 
+        }
+
+    public String getFrequenciaUso() { 
+        return frequenciaUso;
+         }
+    public void setFrequenciaUso(String frequenciaUso) { 
+        this.frequenciaUso = frequenciaUso;
+         }
+
+    @Override
+    public String toString() {
+        return "Tratamento{" +
+                "idTratamento=" + idTratamento +
+                ", usuario=" + (usuario != null ? usuario.getIdUsuario() : null) +
+                ", horarioUso=" + horarioUso +
+                ", frequenciaUso='" + frequenciaUso + '\'' +
+                '}';
+    }
+}
