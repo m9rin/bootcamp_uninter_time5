@@ -40,9 +40,6 @@
         <mxCell id="vFgC1uRAqt54MEkXl3b5-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;" value="&amp;nbsp;&lt;u&gt;idAlerta&lt;/u&gt;&amp;nbsp;int (PK)&lt;div&gt;&lt;u&gt;&amp;nbsp;idTratamento&lt;/u&gt;&amp;nbsp;int (FK)&lt;br&gt;&lt;div&gt;&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;dataHorarioAlerta datetime&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp;statusAlerta enum(&#39;emitido&#39;, &#39;naoemitido&#39;)&lt;/div&gt;&lt;div&gt;&amp;nbsp;dataHorarioConsumo datetime&lt;/div&gt;&lt;div&gt;&amp;nbsp;confirmacaoConsumo enum(&#39;sim&#39;, &#39;nao&#39;)&lt;/div&gt;" vertex="1">
           <mxGeometry height="190" width="240" x="290" y="830" as="geometry" />
         </mxCell>
-        <mxCell id="vFgC1uRAqt54MEkXl3b5-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="(1,n)" vertex="1">
-          <mxGeometry height="30" width="60" x="680" y="850" as="geometry" />
-        </mxCell>
         <mxCell id="vFgC1uRAqt54MEkXl3b5-5" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;" value="">
           <mxGeometry height="50" relative="1" width="50" as="geometry">
             <mxPoint x="180" y="435" as="sourcePoint" />
