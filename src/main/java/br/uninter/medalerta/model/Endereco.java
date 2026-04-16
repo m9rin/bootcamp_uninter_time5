@@ -8,11 +8,11 @@ public class Endereco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idEndereco")
+    @Column(name = "id_endereco")
     private Integer idEndereco;
 
     @ManyToOne
-    @JoinColumn(name = "idUsuario", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
     @Column(name = "rua", length = 100)
@@ -27,7 +27,7 @@ public class Endereco {
     @Column(name = "bairro", length = 50)
     private String bairro;
 
-    @Column(name = "CEP", length = 10)
+    @Column(name = "cep", length = 10)
     private String cep;
 
     @Column(name = "cidade", length = 50)

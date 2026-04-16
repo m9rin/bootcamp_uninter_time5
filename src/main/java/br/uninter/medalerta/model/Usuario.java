@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "Usuario")
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idUsuario")
+    @Column(name = "id_usuario")
     private Integer idUsuario;
 
     @Column(name = "nome", nullable = false, length = 100)

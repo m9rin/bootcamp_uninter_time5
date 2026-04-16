@@ -10,17 +10,17 @@ public class Tratamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idTratamento")
+    @Column(name = "id_tratamento")
     private Integer idTratamento;
 
     @ManyToOne
-    @JoinColumn(name = "idUsuario", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "horarioUso")
+    @Column(name = "horario_uso")
     private LocalTime horarioUso;
 
-    @Column(name = "frequenciaUso", length = 50)
+    @Column(name = "frequencia_uso", length = 50)
     private String frequenciaUso;
 
     @OneToMany(mappedBy = "tratamento", cascade = CascadeType.ALL, orphanRemoval = true)

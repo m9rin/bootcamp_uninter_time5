@@ -10,16 +10,16 @@ public class Medicamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idMedicamento")
+    @Column(name = "id_medicamento")
     private Integer idMedicamento;
 
-    @Column(name = "nomeComercial", length = 100)
+    @Column(name = "nome_comercial", length = 100)
     private String nomeComercial;
 
-    @Column(name = "nomeGenerico", length = 100)
+    @Column(name = "nome_generico", length = 100)
     private String nomeGenerico;
 
-    @Column(name = "formaUso", length = 100)
+    @Column(name = "forma_uso", length = 100)
     private String formaUso;
 
     @Column(name = "observacao", length = 200)

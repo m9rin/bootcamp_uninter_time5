@@ -9,25 +9,25 @@ public class Alerta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idAlerta")
+    @Column(name = "id_alerta")
     private Integer idAlerta;
 
     @ManyToOne
-    @JoinColumn(name = "idTratamento", nullable = false)
+    @JoinColumn(name = "id_tratamento", nullable = false)
     private Tratamento tratamento;
 
-    @Column(name = "dataHorarioAlerta", nullable = false)
+    @Column(name = "data_horario_alerta", nullable = false)
     private LocalDateTime dataHorarioAlerta;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statusAlerta")
+    @Column(name = "status_alerta")
     private StatusAlerta statusAlerta;
 
-    @Column(name = "dataHorarioConsumo")
+    @Column(name = "data_horario_consumo")
     private LocalDateTime dataHorarioConsumo;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "confirmacaoConsumo")
+    @Column(name = "confirmacao_consumo")
     private ConfirmacaoConsumo confirmacaoConsumo;
 
     public Alerta() {
