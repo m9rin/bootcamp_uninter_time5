@@ -1,5 +1,7 @@
 package br.uninter.medalerta.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -26,6 +28,9 @@ public class Medicamento {
     @Enumerated(EnumType.STRING)
     @Column(name = "quantidade")
     private QuantidadeTipo quantidade;
+
+    @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TratamentoMedicamento> tratamentos;
 
     public Medicamento() {
     }
@@ -71,6 +76,13 @@ public class Medicamento {
     public void setQuantidade(QuantidadeTipo quantidade) { 
         this.quantidade = quantidade;
          }
+
+    public List<TratamentoMedicamento> getTratamentos() { 
+        return tratamentos;
+     }
+    public void setTratamentos(List<TratamentoMedicamento> tratamentos) { 
+        this.tratamentos = tratamentos;
+     }
 
     @Override
     public String toString() {

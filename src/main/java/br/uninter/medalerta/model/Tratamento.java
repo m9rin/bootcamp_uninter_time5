@@ -26,6 +26,9 @@ public class Tratamento {
     @OneToMany(mappedBy = "tratamento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alerta> alertas;
 
+    @OneToMany(mappedBy = "tratamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TratamentoMedicamento> medicamentos;
+
     public Tratamento() {
     }
 
@@ -63,6 +66,13 @@ public class Tratamento {
     public void setAlertas(List<Alerta> alertas) { 
         this.alertas = alertas;
          }
+
+    public List<TratamentoMedicamento> getMedicamentos() { 
+        return medicamentos;
+     }
+    public void setMedicamentos(List<TratamentoMedicamento> medicamentos) { 
+    this.medicamentos = medicamentos;
+    }
 
     @Override
     public String toString() {
