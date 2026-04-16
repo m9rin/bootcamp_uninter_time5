@@ -31,7 +31,12 @@ public class EnderecoService {
     }
 
     public Optional<Endereco> buscarPorId(Integer id) {
-        return enderecoRepository.findById(id);
+        Optional<Endereco> endereco = enderecoRepository.findById(id);
+        if (endereco.isPresent()) {
+            return endereco;
+        } else {
+            throw new RuntimeException("Endereço não encontrado com id: " + id);
+        }
     }
 
     public Endereco atualizar(Integer id, Endereco dadosAtualizados) {

@@ -2,7 +2,6 @@ package br.uninter.medalerta.service;
 
 import br.uninter.medalerta.model.Medicamento;
 import br.uninter.medalerta.repository.MedicamentoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,12 @@ public class MedicamentoService {
     }
 
     public Optional<Medicamento> buscarPorId(Integer id) {
-        return medicamentoRepository.findById(id);
+        Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
+        if (medicamento.isPresent()) {
+            return medicamento;
+        } else {
+            throw new RuntimeException("Medicamento não encontrado com id: " + id); 
+        }
     }
 
     public List<Medicamento> buscarPorNomeComercial(String nome) {
