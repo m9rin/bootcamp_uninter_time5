@@ -2,7 +2,7 @@
 -- Adicione inserts de exemplo para nossos testes e correção.
 -- Exemplo simples de inserção de dados.
 -- Mostraremos 2 tabelas com 3 colunas cada e relacionadas entre si.
-create database MedAlerta;
+create database if not exists MedAlerta;
 use MedAlerta;
 
 create table Usuario (
@@ -29,7 +29,7 @@ create table Medicamento (
 	idMedicamento int auto_increment primary key,
 	nomeComercial varchar(100) not null,
 	nomeGenerico varchar(100),
-	quantidade enum('unidade', 'ml'),
+	quantidade enum('UNIDADE', 'ML'),
 	formaUso varchar(100),
 	observacao varchar(200)
 );
@@ -56,9 +56,9 @@ create table Alerta (
 	idAlerta int auto_increment primary key,
 	idTratamento int not null,
 	dataHorarioAlerta datetime,
-	statusAlerta enum('emitido', 'não emitido'),
+	statusAlerta enum('EMITIDO', 'NAO_EMITIDO'),
 	dataHorarioConsumo datetime,
-	confirmacaoConsumo enum('sim', 'não'),
+	confirmacaoConsumo enum('SIM', 'NAO'),
 	foreign key (idTratamento) references Tratamento(idTratamento)
 );
 
