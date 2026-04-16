@@ -12,8 +12,8 @@ import java.util.Optional;
 @Service
 public class AlertaService {
 
-    private AlertaRepository alertaRepository;
-    private TratamentoRepository tratamentoRepository;
+    private final AlertaRepository alertaRepository;
+    private final TratamentoRepository tratamentoRepository;
 
     public AlertaService(AlertaRepository alertaRepository, TratamentoRepository tratamentoRepository) {
         this.alertaRepository = alertaRepository;
