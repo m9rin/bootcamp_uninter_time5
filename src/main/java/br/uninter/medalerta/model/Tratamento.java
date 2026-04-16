@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-@Table(name = "Tratamento")
+@Table(name = "tratamento")
 public class Tratamento {
 
     @Id

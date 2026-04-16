@@ -3,7 +3,7 @@ package br.uninter.medalerta.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Tratamento_Medicamento")
+@Table(name = "tratamento_medicamento")
 public class TratamentoMedicamento {
 
     @EmbeddedId

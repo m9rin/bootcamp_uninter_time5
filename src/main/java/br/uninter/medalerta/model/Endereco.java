@@ -3,7 +3,7 @@ package br.uninter.medalerta.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Endereco")
+@Table(name = "endereco")
 public class Endereco {
 
     @Id

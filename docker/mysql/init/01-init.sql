@@ -1,18 +1,17 @@
--- Arquivo para dados iniciais.
--- Adicione inserts de exemplo para nossos testes e correção.
--- Exemplo simples de inserção de dados.
--- Mostraremos 2 tabelas com 3 colunas cada e relacionadas entre si.
-CREATE DATABASE IF NOT EXISTS MedAlerta;
-USE MedAlerta;
+ALTER DATABASE medalerta
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS Usuario (
+USE medalerta;
+
+CREATE TABLE usuario (
     idUsuario int auto_increment primary key,
     nome varchar(100) not null,
     telefone varchar(20) not null,
     email varchar(100) not null
 );
 
-CREATE TABLE IF NOT EXISTS Endereco (
+CREATE TABLE endereco (
     idEndereco int auto_increment primary key,
     idUsuario int not null,
     rua varchar(100),
@@ -22,10 +21,10 @@ CREATE TABLE IF NOT EXISTS Endereco (
     cep varchar(10),
     cidade varchar(50),
     estado char(2),
-    foreign key (idUsuario) references Usuario(idUsuario)
+    foreign key (idUsuario) references usuario(idUsuario)
 );
 
-CREATE TABLE IF NOT EXISTS Medicamento (
+CREATE TABLE medicamento (
     idMedicamento int auto_increment primary key,
     nomeComercial varchar(100) not null,
     nomeGenerico varchar(100),
@@ -34,35 +33,35 @@ CREATE TABLE IF NOT EXISTS Medicamento (
     observacao varchar(200)
 );
 
-CREATE TABLE IF NOT EXISTS Tratamento (
+CREATE TABLE tratamento (
     idTratamento int auto_increment primary key,
     idUsuario int not null,
     horarioUso time,
     frequenciaUso varchar(50),
-    foreign key (idUsuario) references Usuario(idUsuario)
+    foreign key (idUsuario) references usuario(idUsuario)
 );
 
-CREATE TABLE IF NOT EXISTS Tratamento_Medicamento (
+CREATE TABLE tratamento_medicamento (
     idTratamento int not null,
     idMedicamento int not null,
     quantidade varchar(50),
     observacao varchar(200),
     primary key (idTratamento, idMedicamento),
-    foreign key (idTratamento) references Tratamento(idTratamento),
-    foreign key (idMedicamento) references Medicamento(idMedicamento)
+    foreign key (idTratamento) references tratamento(idTratamento),
+    foreign key (idMedicamento) references medicamento(idMedicamento)
 );
 
-CREATE TABLE IF NOT EXISTS Alerta (
+CREATE TABLE alerta (
     idAlerta int auto_increment primary key,
     idTratamento int not null,
     dataHorarioAlerta datetime,
     statusAlerta enum('EMITIDO', 'NAO_EMITIDO'),
     dataHorarioConsumo datetime,
     confirmacaoConsumo enum('SIM', 'NAO'),
-    foreign key (idTratamento) references Tratamento(idTratamento)
+    foreign key (idTratamento) references tratamento(idTratamento)
 );
 
-INSERT INTO Usuario (nome, telefone, email) VALUES
+INSERT INTO usuario (nome, telefone, email) VALUES
 ('Ana Souza', '41999990001', 'ana@email.com'),
 ('Bruno Lima', '41999990002', 'bruno@email.com'),
 ('Carla Mendes', '41999990003', 'carla@email.com'),
@@ -79,7 +78,7 @@ INSERT INTO Usuario (nome, telefone, email) VALUES
 ('Patricia Ribeiro', '41999990014', 'patricia@email.com'),
 ('Eduardo Santana', '41999990015', 'eduardo@email.com');
 
-INSERT INTO Endereco (idUsuario, rua, numero, bairro, cep, cidade, estado) VALUES
+INSERT INTO endereco (idUsuario, rua, numero, bairro, cep, cidade, estado) VALUES
 (1,'Rua A',10,'Centro','80000-001','Curitiba','PR'),
 (2,'Rua B',20,'Batel','80000-002','Curitiba','PR'),
 (3,'Rua C',30,'Água Verde','80000-003','Curitiba','PR'),
@@ -96,7 +95,7 @@ INSERT INTO Endereco (idUsuario, rua, numero, bairro, cep, cidade, estado) VALUE
 (14,'Rua N',140,'Mercês','80000-014','Curitiba','PR'),
 (15,'Rua O',150,'Centro Cívico','80000-015','Curitiba','PR');
 
-INSERT INTO Medicamento (nomeComercial, nomeGenerico, quantidade, formaUso, observacao) VALUES
+INSERT INTO medicamento (nomeComercial, nomeGenerico, quantidade, formaUso, observacao) VALUES
 ('Tylenol','Paracetamol','UNIDADE','oral','dor e febre'),
 ('Advil','Ibuprofeno','UNIDADE','oral','anti-inflamatório'),
 ('Amoxil','Amoxicilina','ML','oral','antibiótico'),
@@ -108,7 +107,7 @@ INSERT INTO Medicamento (nomeComercial, nomeGenerico, quantidade, formaUso, obse
 ('Vick','Camphora','ML','tópico','não ingerir'),
 ('Cataflam','Diclofenaco','UNIDADE','oral','dor muscular');
 
-INSERT INTO Tratamento (idUsuario, horarioUso, frequenciaUso) VALUES
+INSERT INTO tratamento (idUsuario, horarioUso, frequenciaUso) VALUES
 (1,'08:00:00','8h'), (2,'09:00:00','12h'),
 (3,'10:00:00','1x dia'), (4,'11:00:00','1x dia'),
 (5,'08:30:00','8h'), (6,'12:00:00','1x dia'),
@@ -118,7 +117,7 @@ INSERT INTO Tratamento (idUsuario, horarioUso, frequenciaUso) VALUES
 (13,'10:30:00','8h'), (14,'11:30:00','12h'),
 (15,'07:30:00','1x dia');
 
-INSERT INTO Tratamento_Medicamento VALUES
+INSERT INTO tratamento_medicamento VALUES
 (1,1,'1 comprimido',null),
 (2,2,'1 comprimido',null),
 (3,3,'10 ml',null),
@@ -135,7 +134,7 @@ INSERT INTO Tratamento_Medicamento VALUES
 (14,4,'1 comprimido',null),
 (15,5,'1 comprimido',null);
 
-INSERT INTO Alerta (idTratamento, dataHorarioAlerta, statusAlerta, dataHorarioConsumo, confirmacaoConsumo) VALUES
+INSERT INTO alerta (idTratamento, dataHorarioAlerta, statusAlerta, dataHorarioConsumo, confirmacaoConsumo) VALUES
 (1,'2026-04-15 07:55:00','EMITIDO','2026-04-15 08:05:00','SIM'),
 (2,'2026-04-15 08:55:00','EMITIDO','2026-04-15 09:10:00','SIM'),
 (3,'2026-04-15 09:55:00','NAO_EMITIDO',null,'NAO'),
