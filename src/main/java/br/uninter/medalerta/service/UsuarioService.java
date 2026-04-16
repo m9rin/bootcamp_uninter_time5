@@ -3,50 +3,50 @@ package br.uninter.medalerta.service;
 import br.uninter.medalerta.model.Usuario;
 import br.uninter.medalerta.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository repository;
+    private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepository repository) {
-        this.repository = repository;
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     public Usuario salvar(Usuario usuario) {
-        return repository.save(usuario);
+        return usuarioRepository.save(usuario);
     }
 
     public List<Usuario> listarTodos() {
-        return repository.findAll();
+        return usuarioRepository.findAll();
     }
 
-    public Usuario buscarPorId(Integer id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + id));
+    public Optional<Usuario> buscarPorId(Integer id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            return usuario;
+        } else {
+            throw new RuntimeException("Usuário não encontrado com id: " + id);
+        }
     }
 
-    public Usuario atualizar(Integer id, Usuario novoUsuario) {
-        Usuario existente = buscarPorId(id);
-
-        existente.setNome(novoUsuario.getNome());
-        existente.setTelefone(novoUsuario.getTelefone());
-        existente.setEmail(novoUsuario.getEmail());
-        existente.setEnderecoRua(novoUsuario.getEnderecoRua());
-        existente.setEnderecoNumero(novoUsuario.getEnderecoNumero());
-        existente.setEnderecoComplemento(novoUsuario.getEnderecoComplemento());
-        existente.setEnderecoBairro(novoUsuario.getEnderecoBairro());
-        existente.setEnderecoCEP(novoUsuario.getEnderecoCEP());
-        existente.setEnderecoCidade(novoUsuario.getEnderecoCidade());
-        existente.setEnderecoEstado(novoUsuario.getEnderecoEstado());
-
-        return repository.save(existente);
+    public Usuario atualizar(Integer id, Usuario dadosAtualizados) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setNome(dadosAtualizados.getNome());
+            usuario.setTelefone(dadosAtualizados.getTelefone());
+            usuario.setEmail(dadosAtualizados.getEmail());
+            return usuarioRepository.save(usuario);
+        }).orElseThrow(() -> new RuntimeException("Usuário não encontrado com id: " + id));
     }
 
     public void deletar(Integer id) {
-        Usuario usuario = buscarPorId(id);
-        repository.delete(usuario);
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            usuarioRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Usuário não encontrado com id: " + id);
+        }
     }
 }

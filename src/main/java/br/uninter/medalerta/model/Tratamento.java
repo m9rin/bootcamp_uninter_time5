@@ -10,39 +10,48 @@ public class Tratamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdTratamento")
+    @Column(name = "idTratamento")
     private Integer idTratamento;
 
     @ManyToOne
-    @JoinColumn(name = "IdUsuario", nullable = false)
+    @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "HorarioUso")
+    @Column(name = "horarioUso")
     private LocalTime horarioUso;
 
-    @Column(name = "FrequenciaUso", length = 50)
+    @Column(name = "frequenciaUso", length = 50)
     private String frequenciaUso;
 
+    @OneToMany(mappedBy = "tratamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alerta> alertas;
+
+    @OneToMany(mappedBy = "tratamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TratamentoMedicamento> medicamentos;
+
+    public Tratamento() {
+    }
+
     public Integer getIdTratamento() { 
-        return idTratamento; 
-        }
+        return idTratamento;
+         }
     public void setIdTratamento(Integer idTratamento) { 
-        this.idTratamento = idTratamento; 
-        }
+        this.idTratamento = idTratamento;
+         }
 
     public Usuario getUsuario() { 
-        return usuario; 
-        }
+        return usuario;
+         }
     public void setUsuario(Usuario usuario) { 
-        this.usuario = usuario; 
-        }
+        this.usuario = usuario;
+         }
 
-    public LocalTime getHorarioUso() {
-         return horarioUso; 
+    public LocalTime getHorarioUso() { 
+        return horarioUso;
          }
     public void setHorarioUso(LocalTime horarioUso) { 
-        this.horarioUso = horarioUso; 
-        }
+        this.horarioUso = horarioUso;
+         }
 
     public String getFrequenciaUso() { 
         return frequenciaUso;
@@ -50,6 +59,20 @@ public class Tratamento {
     public void setFrequenciaUso(String frequenciaUso) { 
         this.frequenciaUso = frequenciaUso;
          }
+
+    public List<Alerta> getAlertas() { 
+        return alertas;
+         }
+    public void setAlertas(List<Alerta> alertas) { 
+        this.alertas = alertas;
+         }
+
+    public List<TratamentoMedicamento> getMedicamentos() { 
+        return medicamentos;
+     }
+    public void setMedicamentos(List<TratamentoMedicamento> medicamentos) { 
+    this.medicamentos = medicamentos;
+    }
 
     @Override
     public String toString() {
