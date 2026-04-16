@@ -2,67 +2,67 @@
 -- Adicione inserts de exemplo para nossos testes e correção.
 -- Exemplo simples de inserção de dados.
 -- Mostraremos 2 tabelas com 3 colunas cada e relacionadas entre si.
-create database if not exists MedAlerta;
-use MedAlerta;
+CREATE DATABASE IF NOT EXISTS MedAlerta;
+USE MedAlerta;
 
-create table Usuario (
-	idUsuario int auto_increment primary key,
-	nome varchar(100) not null,
-	telefone varchar(20) not null,
-	email varchar(100) not null
+CREATE TABLE IF NOT EXISTS Usuario (
+    idUsuario int auto_increment primary key,
+    nome varchar(100) not null,
+    telefone varchar(20) not null,
+    email varchar(100) not null
 );
 
-create table Endereco (
-	idEndereco int auto_increment primary key,
-	idUsuario int not null,
-	rua varchar(100),
-	numero int,
-	complemento varchar(50),
-	bairro varchar(50),
-	cep varchar(10),
-	cidade varchar(50),
-	estado char(2),
-	foreign key (idUsuario) references Usuario(idUsuario)
+CREATE TABLE IF NOT EXISTS Endereco (
+    idEndereco int auto_increment primary key,
+    idUsuario int not null,
+    rua varchar(100),
+    numero int,
+    complemento varchar(50),
+    bairro varchar(50),
+    cep varchar(10),
+    cidade varchar(50),
+    estado char(2),
+    foreign key (idUsuario) references Usuario(idUsuario)
 );
 
-create table Medicamento (
-	idMedicamento int auto_increment primary key,
-	nomeComercial varchar(100) not null,
-	nomeGenerico varchar(100),
-	quantidade enum('UNIDADE', 'ML'),
-	formaUso varchar(100),
-	observacao varchar(200)
+CREATE TABLE IF NOT EXISTS Medicamento (
+    idMedicamento int auto_increment primary key,
+    nomeComercial varchar(100) not null,
+    nomeGenerico varchar(100),
+    quantidade enum('UNIDADE', 'ML'),
+    formaUso varchar(100),
+    observacao varchar(200)
 );
 
-create table Tratamento (
-	idTratamento int auto_increment primary key,
-	idUsuario int not null,
-	horarioUso time,
-	frequenciaUso varchar(50),
-	foreign key (idUsuario) references Usuario(idUsuario)
+CREATE TABLE IF NOT EXISTS Tratamento (
+    idTratamento int auto_increment primary key,
+    idUsuario int not null,
+    horarioUso time,
+    frequenciaUso varchar(50),
+    foreign key (idUsuario) references Usuario(idUsuario)
 );
 
-create table Tratamento_Medicamento (
-	idTratamento int not null,
-	idMedicamento int not null,
-	quantidade varchar(50),
-	observacao varchar(200),
-	primary key (idTratamento, idMedicamento),
-	foreign key (idTratamento) references Tratamento(idTratamento),
-	foreign key (idMedicamento) references Medicamento(idMedicamento)
+CREATE TABLE IF NOT EXISTS Tratamento_Medicamento (
+    idTratamento int not null,
+    idMedicamento int not null,
+    quantidade varchar(50),
+    observacao varchar(200),
+    primary key (idTratamento, idMedicamento),
+    foreign key (idTratamento) references Tratamento(idTratamento),
+    foreign key (idMedicamento) references Medicamento(idMedicamento)
 );
 
-create table Alerta (
-	idAlerta int auto_increment primary key,
-	idTratamento int not null,
-	dataHorarioAlerta datetime,
-	statusAlerta enum('EMITIDO', 'NAO_EMITIDO'),
-	dataHorarioConsumo datetime,
-	confirmacaoConsumo enum('SIM', 'NAO'),
-	foreign key (idTratamento) references Tratamento(idTratamento)
+CREATE TABLE IF NOT EXISTS Alerta (
+    idAlerta int auto_increment primary key,
+    idTratamento int not null,
+    dataHorarioAlerta datetime,
+    statusAlerta enum('EMITIDO', 'NAO_EMITIDO'),
+    dataHorarioConsumo datetime,
+    confirmacaoConsumo enum('SIM', 'NAO'),
+    foreign key (idTratamento) references Tratamento(idTratamento)
 );
 
-insert into Usuario (nome, telefone, email) values
+INSERT INTO Usuario (nome, telefone, email) VALUES
 ('Ana Souza', '41999990001', 'ana@email.com'),
 ('Bruno Lima', '41999990002', 'bruno@email.com'),
 ('Carla Mendes', '41999990003', 'carla@email.com'),
@@ -79,7 +79,7 @@ insert into Usuario (nome, telefone, email) values
 ('Patricia Ribeiro', '41999990014', 'patricia@email.com'),
 ('Eduardo Santana', '41999990015', 'eduardo@email.com');
 
-insert into Endereco (idUsuario, rua, numero, bairro, cep, cidade, estado) values
+INSERT INTO Endereco (idUsuario, rua, numero, bairro, cep, cidade, estado) VALUES
 (1,'Rua A',10,'Centro','80000-001','Curitiba','PR'),
 (2,'Rua B',20,'Batel','80000-002','Curitiba','PR'),
 (3,'Rua C',30,'Água Verde','80000-003','Curitiba','PR'),
@@ -96,19 +96,19 @@ insert into Endereco (idUsuario, rua, numero, bairro, cep, cidade, estado) value
 (14,'Rua N',140,'Mercês','80000-014','Curitiba','PR'),
 (15,'Rua O',150,'Centro Cívico','80000-015','Curitiba','PR');
 
-insert into Medicamento (nomeComercial, nomeGenerico, quantidade, formaUso, observacao) values
-('Tylenol','Paracetamol','unidade','oral','dor e febre'),
-('Advil','Ibuprofeno','unidade','oral','anti-inflamatório'),
-('Amoxil','Amoxicilina','ml','oral','antibiótico'),
-('Dipirona','Dipirona Sódica','unidade','oral',null),
-('Buscopan','Butilbrometo','unidade','oral','cólicas'),
-('Novalgina','Dipirona','ml','oral',null),
-('Atenol','Atenolol','unidade','oral','pressão'),
-('Losartana','Losartana','unidade','oral',null),
-('Vick','Camphora','ml','tópico','não ingerir'),
-('Cataflam','Diclofenaco','unidade','oral','dor muscular');
+INSERT INTO Medicamento (nomeComercial, nomeGenerico, quantidade, formaUso, observacao) VALUES
+('Tylenol','Paracetamol','UNIDADE','oral','dor e febre'),
+('Advil','Ibuprofeno','UNIDADE','oral','anti-inflamatório'),
+('Amoxil','Amoxicilina','ML','oral','antibiótico'),
+('Dipirona','Dipirona Sódica','UNIDADE','oral',null),
+('Buscopan','Butilbrometo','UNIDADE','oral','cólicas'),
+('Novalgina','Dipirona','ML','oral',null),
+('Atenol','Atenolol','UNIDADE','oral','pressão'),
+('Losartana','Losartana','UNIDADE','oral',null),
+('Vick','Camphora','ML','tópico','não ingerir'),
+('Cataflam','Diclofenaco','UNIDADE','oral','dor muscular');
 
-insert into Tratamento (idUsuario, horarioUso, frequenciaUso) values
+INSERT INTO Tratamento (idUsuario, horarioUso, frequenciaUso) VALUES
 (1,'08:00:00','8h'), (2,'09:00:00','12h'),
 (3,'10:00:00','1x dia'), (4,'11:00:00','1x dia'),
 (5,'08:30:00','8h'), (6,'12:00:00','1x dia'),
@@ -118,7 +118,7 @@ insert into Tratamento (idUsuario, horarioUso, frequenciaUso) values
 (13,'10:30:00','8h'), (14,'11:30:00','12h'),
 (15,'07:30:00','1x dia');
 
-insert into Tratamento_Medicamento values
+INSERT INTO Tratamento_Medicamento VALUES
 (1,1,'1 comprimido',null),
 (2,2,'1 comprimido',null),
 (3,3,'10 ml',null),
@@ -135,22 +135,22 @@ insert into Tratamento_Medicamento values
 (14,4,'1 comprimido',null),
 (15,5,'1 comprimido',null);
 
-insert into Alerta (idTratamento, dataHorarioAlerta, statusAlerta, dataHorarioConsumo, confirmacaoConsumo) values
-(1,'2026-04-15 07:55:00','emitido','2026-04-15 08:05:00','sim'),
-(2,'2026-04-15 08:55:00','emitido','2026-04-15 09:10:00','sim'),
-(3,'2026-04-15 09:55:00','não emitido',null,'não'),
-(4,'2026-04-15 10:55:00','emitido','2026-04-15 11:05:00','sim'),
-(5,'2026-04-15 07:25:00','emitido','2026-04-15 08:00:00','sim'),
-(6,'2026-04-15 11:55:00','não emitido',null,'não'),
-(7,'2026-04-15 12:55:00','emitido','2026-04-15 13:10:00','sim'),
-(8,'2026-04-15 13:55:00','emitido','2026-04-15 14:05:00','sim'),
-(9,'2026-04-15 14:55:00','emitido','2026-04-15 15:10:00','sim'),
-(10,'2026-04-15 15:55:00','não emitido',null,'não'),
-(11,'2026-04-15 07:55:00','emitido','2026-04-15 08:10:00','sim'),
-(12,'2026-04-15 08:25:00','emitido','2026-04-15 09:00:00','sim'),
-(13,'2026-04-15 09:25:00','não emitido',null,'não'),
-(14,'2026-04-15 10:25:00','emitido','2026-04-15 10:40:00','sim'),
-(15,'2026-04-15 06:55:00','emitido','2026-04-15 07:05:00','sim');
+INSERT INTO Alerta (idTratamento, dataHorarioAlerta, statusAlerta, dataHorarioConsumo, confirmacaoConsumo) VALUES
+(1,'2026-04-15 07:55:00','EMITIDO','2026-04-15 08:05:00','SIM'),
+(2,'2026-04-15 08:55:00','EMITIDO','2026-04-15 09:10:00','SIM'),
+(3,'2026-04-15 09:55:00','NAO_EMITIDO',null,'NAO'),
+(4,'2026-04-15 10:55:00','EMITIDO','2026-04-15 11:05:00','SIM'),
+(5,'2026-04-15 07:25:00','EMITIDO','2026-04-15 08:00:00','SIM'),
+(6,'2026-04-15 11:55:00','NAO_EMITIDO',null,'NAO'),
+(7,'2026-04-15 12:55:00','EMITIDO','2026-04-15 13:10:00','SIM'),
+(8,'2026-04-15 13:55:00','EMITIDO','2026-04-15 14:05:00','SIM'),
+(9,'2026-04-15 14:55:00','EMITIDO','2026-04-15 15:10:00','SIM'),
+(10,'2026-04-15 15:55:00','NAO_EMITIDO',null,'NAO'),
+(11,'2026-04-15 07:55:00','EMITIDO','2026-04-15 08:10:00','SIM'),
+(12,'2026-04-15 08:25:00','EMITIDO','2026-04-15 09:00:00','SIM'),
+(13,'2026-04-15 09:25:00','NAO_EMITIDO',null,'NAO'),
+(14,'2026-04-15 10:25:00','EMITIDO','2026-04-15 10:40:00','SIM'),
+(15,'2026-04-15 06:55:00','EMITIDO','2026-04-15 07:05:00','SIM');
 
 
 
