@@ -27,6 +27,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tratamento> tratamentos;
 
+    public Usuario() {
+    }
+
     public Integer getIdUsuario() { 
         return idUsuario; 
     }

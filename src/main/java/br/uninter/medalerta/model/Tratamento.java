@@ -26,6 +26,9 @@ public class Tratamento {
     @OneToMany(mappedBy = "tratamento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alerta> alertas;
 
+    public Tratamento() {
+    }
+
     public Integer getIdTratamento() { 
         return idTratamento;
          }

@@ -30,6 +30,9 @@ public class Alerta {
     @Column(name = "confirmacaoConsumo")
     private ConfirmacaoConsumo confirmacaoConsumo;
 
+    public Alerta() {
+    }
+
     public Integer getIdAlerta() { 
         return idAlerta;
          }

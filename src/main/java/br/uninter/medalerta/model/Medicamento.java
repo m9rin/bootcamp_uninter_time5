@@ -27,6 +27,9 @@ public class Medicamento {
     @Column(name = "quantidade")
     private QuantidadeTipo quantidade;
 
+    public Medicamento() {
+    }
+
     public Integer getIdMedicamento() { 
         return idMedicamento;
          }

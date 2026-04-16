@@ -36,6 +36,9 @@ public class Endereco {
     @Column(name = "estado", length = 2)
     private String estado;
 
+    public Endereco() {
+    }
+
     public Integer getIdEndereco() { 
         return idEndereco;
      }
