@@ -1,94 +1,56 @@
--- Arquivo para dados iniciais.
--- Adicione inserts de exemplo para nossos testes e correção.
--- Exemplo simples de inserção de dados.
--- Mostraremos 2 tabelas com 3 colunas cada e relacionadas entre si.
+
+CREATE DATABASE IF NOT EXISTS medalerta
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_0900_ai_ci;
+
 USE medalerta;
-CREATE TABLE IF NOT EXISTS users (
-		id INT PRIMARY KEY AUTO_INCREMENT,
-		name VARCHAR(255),
-		email VARCHAR(255)
-);
-CREATE TABLE IF NOT EXISTS posts (
-		id INT PRIMARY KEY AUTO_INCREMENT,
-		title VARCHAR(255),
-		content TEXT,
-		user_id INT,
-		FOREIGN KEY (user_id) REFERENCES users(id)
-);
-INSERT IGNORE INTO users (name, email) VALUES ('Alice', 'alice@example.com');
-INSERT IGNORE INTO posts (title, content, user_id) VALUES ('Primeira Postagem', 'Conteúdo da primeira postagem.', 1);
 
-CREATE DATABASE MedAlerta;
-USE MedAlerta;
+CREATE TABLE IF NOT EXISTS Usuario (
+    idUsuario        INT          NOT NULL AUTO_INCREMENT,
+    nome             VARCHAR(100) NOT NULL,
+    telefone         VARCHAR(20)  NOT NULL,
+    email            VARCHAR(100) NOT NULL,
+    enderecoRua      VARCHAR(100),
+    enderecoNumero   INT,
+    enderecoComplemento VARCHAR(50),
+    enderecoBairro   VARCHAR(50),
+    enderecoCEP      VARCHAR(10),
+    enderecoCidade   VARCHAR(50),
+    enderecoEstado   CHAR(2),
+    PRIMARY KEY (idUsuario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS Medicamento (
+    idMedicamento  INT          NOT NULL AUTO_INCREMENT,
+    nomeComercial  VARCHAR(100) NOT NULL,
+    nomeGenerico   VARCHAR(100),
+    quantidade     ENUM('unidade', 'ml'),
+    formaUso       VARCHAR(100),
+    observacao     VARCHAR(200),
+    PRIMARY KEY (idMedicamento)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS UsuarioMedicamento (
+    idUsuario             INT          NOT NULL,
+    idMedicamento         INT          NOT NULL,
+    horarioUso            TIME         NOT NULL,
+    frequenciaUso         VARCHAR(50),
+    dosagem               VARCHAR(50)  NOT NULL,
+    dataHorarioAlerta     DATETIME     NOT NULL,
+    statusAlerta          ENUM('emitido', 'nao_emitido') NOT NULL,
+    dataHorarioConsumo    DATETIME,
+    confirmacaoConsumo    ENUM('sim', 'nao') NOT NULL,
+    PRIMARY KEY (idUsuario, idMedicamento),
+    CONSTRAINT fk_um_usuario     FOREIGN KEY (idUsuario)     REFERENCES Usuario(idUsuario),
+    CONSTRAINT fk_um_medicamento FOREIGN KEY (idMedicamento) REFERENCES Medicamento(idMedicamento)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE Usuario (
-	IdUsuario INT PRIMARY KEY NOT NULL,
-	Nome VARCHAR (100) NOT NULL,
-	Telefone VARCHAR (10) NOT NULL,
-	Email VARCHAR (100) NOT NULL,
-	EnderecoRua VARCHAR (100),
-	EnderecoNumero INT (10),
-	EnderecoComplemento VARCHAR (50),
-	EnderecoBairro VARCHAR (50),
-	EnderecoCEP VARCHAR (10),
-	EnderecoCidade VARCHAR (50),
-	EnderecoEstado CHAR (02)
-);
-/*
-CREATE TABLE UsuarioMedicamento(
-	IdUsuario INT NOT NULL,
-	IdMedicamento INT NOT NULL,
-	HorarioUso time NOT NULL,
-	FrequenciaUso VARCHAR(50),
-	Dosagem VARCHAR(50),
-	DataHOrarioAlerta datetime NOT NULL,
-	StatusAlerta ENUM('emitido', 'Nao emitido');
-	DataHorarioConsumo datetime,
-	ConfirmacaoConsumo enum('sim', 'nao') NOT NULL,
-	PRIMARY KEY (IdUsuario, IdMedcimaento),
-	FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario),
-	FOREIGN KEY (IdMedcimaento) REFERENCES Medicamento(IdMedicamento)
-);
-*/
+INSERT IGNORE INTO Usuario (nome, telefone, email, enderecoRua, enderecoNumero, enderecoCidade, enderecoEstado)
+VALUES
+  ('João Silva',  '41999990001', 'joao@email.com',  'Rua das Flores', 100, 'Curitiba', 'PR'),
+  ('Maria Souza', '41999990002', 'maria@email.com', 'Av. Brasil',      200, 'Curitiba', 'PR');
 
-CREATE TABLE Medicamento (
-	IdMedcimaento INT primary key,
-	NomeComercial VARCHAR(100),
-	NomeGenerico VARCHAR(100),
-	Quantidade ENUM('unidade', 'ml'),
-	FormaUso VARCHAR(100),
-	Observacao VARCHAR(200)	
-);
-
-
-CREATE TABLE Tratamento (
-	IdTratamento INT PRIMARY KEY,
-	IdUsuario INT FOREIGN KEY,
-	HorarioUso TIME,
-	FrequenciaUso VARCHAR(50)
-);
-
-CREATE TABLE Alerta (
-	IdAlerta INT PRIMARY KEY,
-	IdTratamento INT FOREIGN KEY,
-	StatusAlerta ENUM ("Emitido", "Nao emitido"),
-	DataHorarioConsumo datetime,
-	ConfirmacaoConsumo ENUM("Sim", "Nao")
-);
-
-
-CREATE TABLE Endereco (
-	IdEndereco INT PRIMARY KEY,
-	IdUsuario INT FOREIGN KEY,
-	EnderecoNumero INT (5),
-	EnderecoComplemento VARCHAR (50),
-	EnderecoBairro VARCHAR (50),
-	EnderecoCEP VARCHAR (50),
-	EnderecoCidade VARCHAR (10),
-	EnderecoEstado CHAR(02)
-);
-
-
-
+INSERT IGNORE INTO Medicamento (nomeComercial, nomeGenerico, quantidade, formaUso, observacao)
+VALUES
+  ('Losartana 50mg',  'Losartana Potássica', 'unidade', 'Via oral', 'Tomar com água'),
+  ('Metformina 850mg','Metformina',          'unidade', 'Via oral', 'Tomar após refeição');
