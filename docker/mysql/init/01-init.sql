@@ -36,7 +36,7 @@ CREATE TABLE Usuario (
 	EnderecoCidade VARCHAR (50),
 	EnderecoEstado CHAR (02)
 );
-
+/*
 CREATE TABLE UsuarioMedicamento(
 	IdUsuario INT NOT NULL,
 	IdMedicamento INT NOT NULL,
@@ -51,6 +51,7 @@ CREATE TABLE UsuarioMedicamento(
 	FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario),
 	FOREIGN KEY (IdMedcimaento) REFERENCES Medicamento(IdMedicamento)
 );
+*/
 
 CREATE TABLE Medicamento (
 	IdMedcimaento INT primary key,
@@ -60,4 +61,34 @@ CREATE TABLE Medicamento (
 	FormaUso VARCHAR(100),
 	Observacao VARCHAR(200)	
 );
+
+
+CREATE TABLE Tratamento (
+	IdTratamento INT PRIMARY KEY,
+	IdUsuario INT FOREIGN KEY,
+	HorarioUso TIME,
+	FrequenciaUso VARCHAR(50)
+);
+
+CREATE TABLE Alerta (
+	IdAlerta INT PRIMARY KEY,
+	IdTratamento INT FOREIGN KEY,
+	StatusAlerta ENUM ("Emitido", "Nao emitido"),
+	DataHorarioConsumo datetime,
+	ConfirmacaoConsumo ENUM("Sim", "Nao")
+);
+
+
+CREATE TABLE Endereco (
+	IdEndereco INT PRIMARY KEY,
+	IdUsuario INT FOREIGN KEY,
+	EnderecoNumero INT (5),
+	EnderecoComplemento VARCHAR (50),
+	EnderecoBairro VARCHAR (50),
+	EnderecoCEP VARCHAR (50),
+	EnderecoCidade VARCHAR (10),
+	EnderecoEstado CHAR(02)
+);
+
+
 
