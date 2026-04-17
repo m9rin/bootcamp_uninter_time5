@@ -42,8 +42,8 @@ CREATE TABLE tratamento (
 );
 
 CREATE TABLE tratamento_medicamento (
-    idTratamento int not null,
-    idMedicamento int not null,
+    id_tratamento int not null,
+    id_medicamento int not null,
     quantidade varchar(50),
     observacao varchar(200),
     primary key (id_tratamento, id_medicamento),

@@ -11,12 +11,12 @@ public class TratamentoMedicamento {
 
     @ManyToOne
     @MapsId("idTratamento")
-    @JoinColumn(name = "idTratamento", nullable = false)
+    @JoinColumn(name = "id_tratamento", nullable = false)
     private Tratamento tratamento;
 
     @ManyToOne
     @MapsId("idMedicamento")
-    @JoinColumn(name = "idMedicamento", nullable = false)
+    @JoinColumn(name = "id_medicamento", nullable = false)
     private Medicamento medicamento;
 
     public TratamentoMedicamento() {}

@@ -8,10 +8,10 @@ import java.util.Objects;
 @Embeddable
 public class TratamentoMedicamentoId implements Serializable {
 
-    @Column(name = "idTratamento")
+    @Column(name = "id_tratamento")
     private Integer idTratamento;
 
-    @Column(name = "idMedicamento")
+    @Column(name = "id_medicamento")
     private Integer idMedicamento;
 
     public TratamentoMedicamentoId() {}
