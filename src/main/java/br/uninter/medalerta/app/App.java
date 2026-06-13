@@ -1,10 +1,22 @@
 package br.uninter.medalerta.app;
 
-import br.uninter.medalerta.model.*;
-import br.uninter.medalerta.service.*;
+import br.uninter.medalerta.model.Alerta;
+import br.uninter.medalerta.model.ConfirmacaoConsumo;
+import br.uninter.medalerta.model.Medicamento;
+import br.uninter.medalerta.model.QuantidadeTipo;
+import br.uninter.medalerta.model.StatusAlerta;
+import br.uninter.medalerta.model.Tratamento;
+import br.uninter.medalerta.model.TratamentoMedicamento;
+import br.uninter.medalerta.model.Usuario;
+import br.uninter.medalerta.service.AlertaService;
+import br.uninter.medalerta.service.MedicamentoService;
+import br.uninter.medalerta.service.TratamentoService;
+import br.uninter.medalerta.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -13,37 +25,23 @@ import java.util.List;
 import java.util.Scanner;
 
 @Component
+@RequiredArgsConstructor
 public class App implements CommandLineRunner {
 
     private final UsuarioService usuarioService;
-    private final EnderecoService enderecoService;
     private final MedicamentoService medicamentoService;
     private final TratamentoService tratamentoService;
     private final AlertaService alertaService;
-    private final TratamentoMedicamentoService tratamentoMedicamentoService;
 
     private final Scanner scanner = new Scanner(System.in);
     private final DateTimeFormatter fmtDateTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private final DateTimeFormatter fmtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DateTimeFormatter fmtTime = DateTimeFormatter.ofPattern("HH:mm");
-
-    public App(UsuarioService usuarioService,
-               EnderecoService enderecoService,
-               MedicamentoService medicamentoService,
-               TratamentoService tratamentoService,
-               AlertaService alertaService,
-               TratamentoMedicamentoService tratamentoMedicamentoService) {
-        this.usuarioService = usuarioService;
-        this.enderecoService = enderecoService;
-        this.medicamentoService = medicamentoService;
-        this.tratamentoService = tratamentoService;
-        this.alertaService = alertaService;
-        this.tratamentoMedicamentoService = tratamentoMedicamentoService;
-    }
 
     @Override
     public void run(String... args) {
         System.out.println("==============================");
-        System.out.println("         MedAlerta            ");
+        System.out.println("         MedAlerta");
         System.out.println("  Seu lembrete de medicamentos");
         System.out.println("==============================");
 
@@ -51,20 +49,18 @@ public class App implements CommandLineRunner {
         while (rodando) {
             System.out.println("\n--- MENU PRINCIPAL ---");
             System.out.println("1 - Usuarios");
-            System.out.println("2 - Enderecos");
-            System.out.println("3 - Medicamentos");
-            System.out.println("4 - Tratamentos");
-            System.out.println("5 - Alertas");
-            System.out.println("6 - Medicamentos de um Tratamento");
+            System.out.println("2 - Medicamentos");
+            System.out.println("3 - Tratamentos");
+            System.out.println("4 - Alertas");
+            System.out.println("5 - Medicamentos de um Tratamento");
             System.out.println("0 - Sair");
 
             switch (lerInteiro("Escolha: ")) {
                 case 1 -> menuUsuario();
-                case 2 -> menuEndereco();
-                case 3 -> menuMedicamento();
-                case 4 -> menuTratamento();
-                case 5 -> menuAlerta();
-                case 6 -> menuTratamentoMedicamento();
+                case 2 -> menuMedicamento();
+                case 3 -> menuTratamento();
+                case 4 -> menuAlerta();
+                case 5 -> menuTratamentoMedicamento();
                 case 0 -> rodando = false;
                 default -> aviso("Opcao invalida. Tente novamente.");
             }
@@ -93,146 +89,53 @@ public class App implements CommandLineRunner {
     }
 
     private void cadastrarUsuario() {
-        System.out.println("\nNovo Usuario");
-        Usuario u = new Usuario();
-        u.setNome(lerTexto("Nome: "));
-        u.setTelefone(lerTexto("Telefone: "));
-        u.setEmail(lerTexto("E-mail: "));
-        usuarioService.salvar(u);
+        Usuario usuario = new Usuario();
+        usuario.setNome(lerTexto("Nome: "));
+        usuario.setTelefone(lerTexto("Telefone: "));
+        usuario.setEmail(lerTexto("E-mail: "));
+        usuarioService.salvar(usuario);
         ok("Usuario cadastrado com sucesso!");
     }
 
     private void listarUsuarios() {
-        List<Usuario> lista = usuarioService.listarTodos();
-        if (lista.isEmpty()) { 
-            aviso("Nenhum usuario cadastrado."); 
-            return; 
+        List<Usuario> usuarios = usuarioService.listarTodos();
+        if (usuarios.isEmpty()) {
+            aviso("Nenhum usuario cadastrado.");
+            return;
         }
-        System.out.println("\nUsuarios:");
-        lista.forEach(u -> System.out.printf("  [%d] %s | %s | %s%n",
+        usuarios.forEach(u -> System.out.printf("  [%d] %s | %s | %s%n",
                 u.getIdUsuario(), u.getNome(), u.getTelefone(), u.getEmail()));
     }
 
     private void buscarUsuario() {
         int id = lerInteiro("ID do usuario: ");
         usuarioService.buscarPorId(id).ifPresentOrElse(
-                u -> System.out.printf("\n[%d] %s | %s | %s%n",
-                        u.getIdUsuario(), u.getNome(), u.getTelefone(), u.getEmail()),
+                u -> System.out.printf("[%d] %s | %s | %s%n", u.getIdUsuario(), u.getNome(), u.getTelefone(), u.getEmail()),
                 () -> aviso("Usuario nao encontrado.")
         );
     }
 
     private void atualizarUsuario() {
         int id = lerInteiro("ID do usuario a atualizar: ");
-        usuarioService.buscarPorId(id).ifPresentOrElse(u -> {
+        usuarioService.buscarPorId(id).ifPresentOrElse(usuario -> {
             System.out.println("Deixe em branco para manter o valor atual.");
-            String nome  = lerTextoOpcional("Nome [" + u.getNome() + "]: ");
-            String tel   = lerTextoOpcional("Telefone [" + u.getTelefone() + "]: ");
-            String email = lerTextoOpcional("E-mail [" + u.getEmail() + "]: ");
-            if (!nome.isBlank())  u.setNome(nome);
-            if (!tel.isBlank())   u.setTelefone(tel);
-            if (!email.isBlank()) u.setEmail(email);
-            usuarioService.salvar(u);
+            String nome = lerTextoOpcional("Nome [" + usuario.getNome() + "]: ");
+            String telefone = lerTextoOpcional("Telefone [" + usuario.getTelefone() + "]: ");
+            String email = lerTextoOpcional("E-mail [" + usuario.getEmail() + "]: ");
+            if (!nome.isBlank()) usuario.setNome(nome);
+            if (!telefone.isBlank()) usuario.setTelefone(telefone);
+            if (!email.isBlank()) usuario.setEmail(email);
+            usuarioService.salvar(usuario);
             ok("Usuario atualizado!");
         }, () -> aviso("Usuario nao encontrado."));
     }
 
     private void removerUsuario() {
         int id = lerInteiro("ID do usuario a remover: ");
-        usuarioService.buscarPorId(id).ifPresentOrElse(u -> {
+        usuarioService.buscarPorId(id).ifPresentOrElse(usuario -> {
             usuarioService.deletar(id);
             ok("Usuario removido.");
         }, () -> aviso("Usuario nao encontrado."));
-    }
-
-    private void menuEndereco() {
-        System.out.println("\n--- Enderecos ---");
-        System.out.println("1 - Cadastrar");
-        System.out.println("2 - Listar por usuario");
-        System.out.println("3 - Buscar por ID");
-        System.out.println("4 - Atualizar");
-        System.out.println("5 - Remover");
-        System.out.println("0 - Voltar");
-
-        switch (lerInteiro("Escolha: ")) {
-            case 1 -> cadastrarEndereco();
-            case 2 -> listarEnderecosPorUsuario();
-            case 3 -> buscarEndereco();
-            case 4 -> atualizarEndereco();
-            case 5 -> removerEndereco();
-            case 0 -> {}
-            default -> aviso("Opcao invalida.");
-        }
-    }
-
-    private void cadastrarEndereco() {
-        System.out.println("\nNovo Endereco");
-        listarUsuarios();
-        int idUsuario = lerInteiro("ID do usuario: ");
-        Endereco e = new Endereco();
-        e.setRua(lerTexto("Rua: "));
-        e.setNumero(lerInteiro("Numero: "));
-        e.setComplemento(lerTextoOpcional("Complemento (opcional): "));
-        e.setBairro(lerTexto("Bairro: "));
-        e.setCep(lerTexto("CEP: "));
-        e.setCidade(lerTexto("Cidade: "));
-        e.setEstado(lerTexto("Estado (UF): "));
-        enderecoService.salvar(idUsuario, e);
-        ok("Endereco cadastrado!");
-    }
-
-    private void listarEnderecosPorUsuario() {
-        int idUsuario = lerInteiro("ID do usuario: ");
-        List<Endereco> lista = enderecoService.listarPorUsuario(idUsuario);
-        if (lista.isEmpty()) { 
-            aviso("Nenhum endereco encontrado para este usuario."); 
-            return; 
-        }
-        System.out.println("\nEnderecos:");
-        lista.forEach(e -> System.out.printf("  [%d] %s, %d %s - %s - %s/%s | CEP: %s%n",
-                e.getIdEndereco(), e.getRua(), e.getNumero(),
-                e.getComplemento() != null ? e.getComplemento() : "",
-                e.getBairro(), e.getCidade(), e.getEstado(), e.getCep()));
-    }
-
-    private void buscarEndereco() {
-        int id = lerInteiro("ID do endereco: ");
-        enderecoService.buscarPorId(id).ifPresentOrElse(
-                e -> System.out.printf("\n[%d] %s, %d %s - %s - %s/%s | CEP: %s%n",
-                        e.getIdEndereco(), e.getRua(), e.getNumero(),
-                        e.getComplemento() != null ? e.getComplemento() : "",
-                        e.getBairro(), e.getCidade(), e.getEstado(), e.getCep()),
-                () -> aviso("Endereco nao encontrado.")
-        );
-    }
-
-    private void atualizarEndereco() {
-        int id = lerInteiro("ID do endereco a atualizar: ");
-        enderecoService.buscarPorId(id).ifPresentOrElse(e -> {
-            System.out.println("Deixe em branco para manter o valor atual.");
-            String rua   = lerTextoOpcional("Rua [" + e.getRua() + "]: ");
-            String bairro = lerTextoOpcional("Bairro [" + e.getBairro() + "]: ");
-            String cep   = lerTextoOpcional("CEP [" + e.getCep() + "]: ");
-            String cidade = lerTextoOpcional("Cidade [" + e.getCidade() + "]: ");
-            String estado = lerTextoOpcional("Estado [" + e.getEstado() + "]: ");
-            String comp  = lerTextoOpcional("Complemento [" + e.getComplemento() + "]: ");
-            if (!rua.isBlank())    e.setRua(rua);
-            if (!bairro.isBlank()) e.setBairro(bairro);
-            if (!cep.isBlank())    e.setCep(cep);
-            if (!cidade.isBlank()) e.setCidade(cidade);
-            if (!estado.isBlank()) e.setEstado(estado);
-            if (!comp.isBlank())   e.setComplemento(comp);
-            enderecoService.atualizar(id, e);
-            ok("Endereco atualizado!");
-        }, () -> aviso("Endereco nao encontrado."));
-    }
-
-    private void removerEndereco() {
-        int id = lerInteiro("ID do endereco a remover: ");
-        enderecoService.buscarPorId(id).ifPresentOrElse(e -> {
-            enderecoService.deletar(id);
-            ok("Endereco removido.");
-        }, () -> aviso("Endereco nao encontrado."));
     }
 
     private void menuMedicamento() {
@@ -256,67 +159,57 @@ public class App implements CommandLineRunner {
     }
 
     private void cadastrarMedicamento() {
-        System.out.println("\nNovo Medicamento");
-        Medicamento m = new Medicamento();
-        m.setNomeComercial(lerTexto("Nome comercial: "));
-        m.setNomeGenerico(lerTexto("Nome generico: "));
-        m.setFormaUso(lerTexto("Forma de uso (ex: oral, injetavel): "));
-        m.setObservacao(lerTextoOpcional("Observacao (opcional): "));
-
-        System.out.println("Quantidade:");
-        QuantidadeTipo[] tipos = QuantidadeTipo.values();
-        for (int i = 0; i < tipos.length; i++)
-            System.out.printf("  %d - %s%n", i + 1, tipos[i].name());
-        int idx = lerInteiro("Escolha: ") - 1;
-        if (idx < 0 || idx >= tipos.length) { 
-            aviso("Opcao invalida."); 
-            return; 
-        }
-        m.setQuantidade(tipos[idx]);
-
-        medicamentoService.salvar(m);
+        Medicamento medicamento = new Medicamento();
+        medicamento.setNomeComercial(lerTexto("Nome comercial: "));
+        medicamento.setNomeGenerico(lerTextoOpcional("Nome generico: "));
+        medicamento.setFormaUso(lerTexto("Forma de uso (ex: oral, injetavel): "));
+        medicamento.setObservacao(lerTextoOpcional("Observacao (opcional): "));
+        medicamento.setUnidadeMedida(lerUnidadeMedida());
+        medicamentoService.salvar(medicamento);
         ok("Medicamento cadastrado!");
     }
 
     private void listarMedicamentos() {
-        List<Medicamento> lista = medicamentoService.listarTodos();
-        if (lista.isEmpty()) { aviso("Nenhum medicamento cadastrado."); return; }
-        System.out.println("\nMedicamentos:");
-        lista.forEach(m -> System.out.printf("  [%d] %s (%s) | %s | %s%n",
-                m.getIdMedicamento(), m.getNomeComercial(), m.getNomeGenerico(),
-                m.getQuantidade(), m.getFormaUso()));
+        List<Medicamento> medicamentos = medicamentoService.listarTodos();
+        if (medicamentos.isEmpty()) {
+            aviso("Nenhum medicamento cadastrado.");
+            return;
+        }
+        medicamentos.forEach(m -> System.out.printf("  [%d] %s (%s) | %s | %s%n",
+                m.getIdMedicamento(), m.getNomeComercial(), valorOuTraco(m.getNomeGenerico()),
+                m.getUnidadeMedida(), valorOuTraco(m.getFormaUso())));
     }
 
     private void buscarMedicamento() {
         int id = lerInteiro("ID do medicamento: ");
         medicamentoService.buscarPorId(id).ifPresentOrElse(
-                m -> System.out.printf("\n[%d] %s (%s) | %s | Obs: %s%n",
-                        m.getIdMedicamento(), m.getNomeComercial(), m.getNomeGenerico(),
-                        m.getFormaUso(), m.getObservacao()),
+                m -> System.out.printf("[%d] %s (%s) | %s | Obs: %s%n",
+                        m.getIdMedicamento(), m.getNomeComercial(), valorOuTraco(m.getNomeGenerico()),
+                        valorOuTraco(m.getFormaUso()), valorOuTraco(m.getObservacao())),
                 () -> aviso("Medicamento nao encontrado.")
         );
     }
 
     private void atualizarMedicamento() {
         int id = lerInteiro("ID do medicamento a atualizar: ");
-        medicamentoService.buscarPorId(id).ifPresentOrElse(m -> {
+        medicamentoService.buscarPorId(id).ifPresentOrElse(medicamento -> {
             System.out.println("Deixe em branco para manter o valor atual.");
-            String nc  = lerTextoOpcional("Nome comercial [" + m.getNomeComercial() + "]: ");
-            String ng  = lerTextoOpcional("Nome generico [" + m.getNomeGenerico() + "]: ");
-            String fu  = lerTextoOpcional("Forma de uso [" + m.getFormaUso() + "]: ");
-            String obs = lerTextoOpcional("Observacao [" + m.getObservacao() + "]: ");
-            if (!nc.isBlank())  m.setNomeComercial(nc);
-            if (!ng.isBlank())  m.setNomeGenerico(ng);
-            if (!fu.isBlank())  m.setFormaUso(fu);
-            if (!obs.isBlank()) m.setObservacao(obs);
-            medicamentoService.salvar(m);
+            String nomeComercial = lerTextoOpcional("Nome comercial [" + medicamento.getNomeComercial() + "]: ");
+            String nomeGenerico = lerTextoOpcional("Nome generico [" + medicamento.getNomeGenerico() + "]: ");
+            String formaUso = lerTextoOpcional("Forma de uso [" + medicamento.getFormaUso() + "]: ");
+            String observacao = lerTextoOpcional("Observacao [" + medicamento.getObservacao() + "]: ");
+            if (!nomeComercial.isBlank()) medicamento.setNomeComercial(nomeComercial);
+            if (!nomeGenerico.isBlank()) medicamento.setNomeGenerico(nomeGenerico);
+            if (!formaUso.isBlank()) medicamento.setFormaUso(formaUso);
+            if (!observacao.isBlank()) medicamento.setObservacao(observacao);
+            medicamentoService.salvar(medicamento);
             ok("Medicamento atualizado!");
         }, () -> aviso("Medicamento nao encontrado."));
     }
 
     private void removerMedicamento() {
         int id = lerInteiro("ID do medicamento a remover: ");
-        medicamentoService.buscarPorId(id).ifPresentOrElse(m -> {
+        medicamentoService.buscarPorId(id).ifPresentOrElse(medicamento -> {
             medicamentoService.deletar(id);
             ok("Medicamento removido.");
         }, () -> aviso("Medicamento nao encontrado."));
@@ -345,70 +238,57 @@ public class App implements CommandLineRunner {
     }
 
     private void cadastrarTratamento() {
-        System.out.println("\nNovo Tratamento");
         listarUsuarios();
         int idUsuario = lerInteiro("ID do usuario: ");
-        Tratamento t = new Tratamento();
-        t.setHorarioUso(lerHorario("Horario de uso (HH:mm): "));
-        t.setFrequenciaUso(lerTexto("Frequencia de uso (ex: a cada 8 horas, diario): "));
-        tratamentoService.salvar(idUsuario, t);
+        Tratamento tratamento = new Tratamento();
+        tratamento.setDescricao(lerTextoOpcional("Descricao do tratamento: "));
+        tratamento.setDataInicio(lerDataOpcional("Data de inicio (dd/MM/yyyy, opcional): "));
+        tratamento.setDataFim(lerDataOpcional("Data de fim (dd/MM/yyyy, opcional): "));
+        tratamento.setStatus(lerTextoOpcional("Status (opcional): "));
+        tratamentoService.salvar(idUsuario, tratamento);
         ok("Tratamento cadastrado!");
     }
 
     private void listarTratamentos() {
-        List<Tratamento> lista = tratamentoService.listarTodos();
-        if (lista.isEmpty()) { 
-            aviso("Nenhum tratamento cadastrado."); 
+        List<Tratamento> tratamentos = tratamentoService.listarTodos();
+        if (tratamentos.isEmpty()) {
+            aviso("Nenhum tratamento cadastrado.");
             return;
         }
-        System.out.println("\nTratamentos:");
-        lista.forEach(t -> System.out.printf("  [%d] Horario: %s | Frequencia: %s | Usuario: %s%n",
-                t.getIdTratamento(),
-                t.getHorarioUso() != null ? t.getHorarioUso().format(fmtTime) : "-",
-                t.getFrequenciaUso(),
-                t.getUsuario().getNome()));
+        tratamentos.forEach(this::imprimirTratamento);
     }
 
     private void listarTratamentosPorUsuario() {
         int idUsuario = lerInteiro("ID do usuario: ");
-        List<Tratamento> lista = tratamentoService.listarPorUsuario(idUsuario);
-        if (lista.isEmpty()) { 
-            aviso("Nenhum tratamento encontrado para este usuario."); 
-            return; 
+        List<Tratamento> tratamentos = tratamentoService.listarPorUsuario(idUsuario);
+        if (tratamentos.isEmpty()) {
+            aviso("Nenhum tratamento encontrado para este usuario.");
+            return;
         }
-        System.out.println("\nTratamentos do usuario:");
-        lista.forEach(t -> System.out.printf("  [%d] Horario: %s | Frequencia: %s%n",
-                t.getIdTratamento(),
-                t.getHorarioUso() != null ? t.getHorarioUso().format(fmtTime) : "-",
-                t.getFrequenciaUso()));
+        tratamentos.forEach(this::imprimirTratamento);
     }
 
     private void buscarTratamento() {
         int id = lerInteiro("ID do tratamento: ");
-        tratamentoService.buscarPorId(id).ifPresentOrElse(
-                t -> System.out.printf("\n[%d] Horario: %s | Frequencia: %s | Usuario: %s%n",
-                        t.getIdTratamento(),
-                        t.getHorarioUso() != null ? t.getHorarioUso().format(fmtTime) : "-",
-                        t.getFrequenciaUso(),
-                        t.getUsuario().getNome()),
-                () -> aviso("Tratamento nao encontrado.")
-        );
+        tratamentoService.buscarPorId(id).ifPresentOrElse(this::imprimirTratamento, () -> aviso("Tratamento nao encontrado."));
     }
 
     private void atualizarTratamento() {
         int id = lerInteiro("ID do tratamento a atualizar: ");
-        tratamentoService.buscarPorId(id).ifPresentOrElse(t -> {
+        tratamentoService.buscarPorId(id).ifPresentOrElse(tratamento -> {
             System.out.println("Deixe em branco para manter o valor atual.");
-            String freq = lerTextoOpcional("Frequencia de uso [" + t.getFrequenciaUso() + "]: ");
-            if (!freq.isBlank()) t.setFrequenciaUso(freq);
-            tratamentoService.salvar(t.getUsuario().getIdUsuario(), t);
+            String descricao = lerTextoOpcional("Descricao [" + tratamento.getDescricao() + "]: ");
+            String status = lerTextoOpcional("Status [" + tratamento.getStatus() + "]: ");
+            if (!descricao.isBlank()) tratamento.setDescricao(descricao);
+            if (!status.isBlank()) tratamento.setStatus(status);
+            tratamentoService.salvar(tratamento.getUsuario().getIdUsuario(), tratamento);
             ok("Tratamento atualizado!");
         }, () -> aviso("Tratamento nao encontrado."));
     }
 
     private void removerTratamento() {
         int id = lerInteiro("ID do tratamento a remover: ");
-        tratamentoService.buscarPorId(id).ifPresentOrElse(t -> {
+        tratamentoService.buscarPorId(id).ifPresentOrElse(tratamento -> {
             tratamentoService.deletar(id);
             ok("Tratamento removido.");
         }, () -> aviso("Tratamento nao encontrado."));
@@ -435,67 +315,57 @@ public class App implements CommandLineRunner {
     }
 
     private void criarAlerta() {
-        System.out.println("\nNovo Alerta");
         listarTratamentos();
         int idTratamento = lerInteiro("ID do tratamento: ");
-        Alerta a = new Alerta();
-        a.setDataHorarioAlerta(lerDataHora("Data/hora do alerta (dd/MM/yyyy HH:mm): "));
-        a.setStatusAlerta(StatusAlerta.NAO_EMITIDO);
-        a.setConfirmacaoConsumo(ConfirmacaoConsumo.NAO);
-        alertaService.salvar(idTratamento, a);
+        Alerta alerta = new Alerta();
+        alerta.setDataHorarioAlerta(lerDataHora("Data/hora do alerta (dd/MM/yyyy HH:mm): "));
+        alerta.setStatusAlerta(StatusAlerta.NAO_EMITIDO);
+        alerta.setConfirmacaoConsumo(ConfirmacaoConsumo.NAO);
+        alertaService.salvar(idTratamento, alerta);
         ok("Alerta criado!");
     }
 
     private void listarAlertasPorTratamento() {
         int idTratamento = lerInteiro("ID do tratamento: ");
-        List<Alerta> lista = alertaService.listarPorTratamento(idTratamento);
-        if (lista.isEmpty()) { 
-            aviso("Nenhum alerta encontrado."); 
-            return; 
+        List<Alerta> alertas = alertaService.listarPorTratamento(idTratamento);
+        if (alertas.isEmpty()) {
+            aviso("Nenhum alerta encontrado.");
+            return;
         }
-        System.out.println("\nAlertas:");
-        lista.forEach(a -> System.out.printf("  [%d] %s | Status: %s | Consumo: %s%n",
-                a.getIdAlerta(),
-                a.getDataHorarioAlerta().format(fmtDateTime),
-                a.getStatusAlerta(),
-                a.getConfirmacaoConsumo()));
+        alertas.forEach(this::imprimirAlerta);
     }
 
     private void listarAlertasNaoEmitidos() {
-        List<Alerta> lista = alertaService.listarPorStatus(StatusAlerta.NAO_EMITIDO);
-        if (lista.isEmpty()) { 
-            ok("Nenhum alerta pendente de emissao."); 
-            return; 
+        List<Alerta> alertas = alertaService.listarPorStatus(StatusAlerta.NAO_EMITIDO);
+        if (alertas.isEmpty()) {
+            ok("Nenhum alerta pendente de emissao.");
+            return;
         }
-        System.out.println("\nAlertas nao emitidos:");
-        lista.forEach(a -> System.out.printf("  [%d] %s | Tratamento ID: %d%n",
-                a.getIdAlerta(),
-                a.getDataHorarioAlerta().format(fmtDateTime),
-                a.getTratamento().getIdTratamento()));
+        alertas.forEach(this::imprimirAlerta);
     }
 
     private void registrarConsumo() {
         int id = lerInteiro("ID do alerta: ");
-        alertaService.buscarPorId(id).ifPresentOrElse(a -> {
-            System.out.println("O medicamento foi tomado?");
-            System.out.println("1 - Sim");
-            System.out.println("2 - Nao");
-            int op = lerInteiro("Escolha: ");
-            switch (op) {
-                case 1 -> a.setConfirmacaoConsumo(ConfirmacaoConsumo.SIM);
-                case 2 -> a.setConfirmacaoConsumo(ConfirmacaoConsumo.NAO);
-                default -> { aviso("Opcao invalida."); return; }
-            }
-            a.setStatusAlerta(StatusAlerta.EMITIDO);
-            a.setDataHorarioConsumo(LocalDateTime.now());
-            alertaService.atualizar(id, a);
-            ok("Consumo registrado!");
-        }, () -> aviso("Alerta nao encontrado."));
+        System.out.println("O medicamento foi tomado?");
+        System.out.println("1 - Sim");
+        System.out.println("2 - Nao");
+        int opcao = lerInteiro("Escolha: ");
+        ConfirmacaoConsumo confirmacao = switch (opcao) {
+            case 1 -> ConfirmacaoConsumo.SIM;
+            case 2 -> ConfirmacaoConsumo.NAO;
+            default -> null;
+        };
+        if (confirmacao == null) {
+            aviso("Opcao invalida.");
+            return;
+        }
+        alertaService.registrarConsumo(id, confirmacao);
+        ok("Consumo registrado!");
     }
 
     private void removerAlerta() {
         int id = lerInteiro("ID do alerta a remover: ");
-        alertaService.buscarPorId(id).ifPresentOrElse(a -> {
+        alertaService.buscarPorId(id).ifPresentOrElse(alerta -> {
             alertaService.deletar(id);
             ok("Alerta removido.");
         }, () -> aviso("Alerta nao encontrado."));
@@ -522,29 +392,68 @@ public class App implements CommandLineRunner {
         int idTratamento = lerInteiro("ID do tratamento: ");
         listarMedicamentos();
         int idMedicamento = lerInteiro("ID do medicamento: ");
-        tratamentoMedicamentoService.associar(idTratamento, idMedicamento);
+        String quantidade = lerTexto("Quantidade/dose (ex: 1 comprimido, 10 ml): ");
+        String observacao = lerTextoOpcional("Observacao (opcional): ");
+        LocalTime horarioUso = lerHorario("Horario de uso (HH:mm): ");
+        String frequenciaUso = lerTexto("Frequencia de uso (ex: 8h, diario): ");
+        tratamentoService.associarMedicamento(idTratamento, idMedicamento, quantidade, observacao, horarioUso, frequenciaUso);
         ok("Medicamento associado ao tratamento!");
     }
 
     private void listarMedicamentosDeTratamento() {
         int idTratamento = lerInteiro("ID do tratamento: ");
-        List<TratamentoMedicamento> lista = tratamentoMedicamentoService.listarPorTratamento(idTratamento);
-        if (lista.isEmpty()) { 
-            aviso("Nenhum medicamento associado."); 
-            return; 
+        List<TratamentoMedicamento> itens = tratamentoService.listarMedicamentos(idTratamento);
+        if (itens.isEmpty()) {
+            aviso("Nenhum medicamento associado.");
+            return;
         }
-        System.out.println("\nMedicamentos do tratamento:");
-        lista.forEach(tm -> System.out.printf("  [%d] %s (%s)%n",
+        itens.forEach(tm -> System.out.printf("  [%d] %s (%s) | Dose: %s | Horario: %s | Frequencia: %s%n",
                 tm.getMedicamento().getIdMedicamento(),
                 tm.getMedicamento().getNomeComercial(),
-                tm.getMedicamento().getNomeGenerico()));
+                valorOuTraco(tm.getMedicamento().getNomeGenerico()),
+                valorOuTraco(tm.getQuantidade()),
+                tm.getHorarioUso() != null ? tm.getHorarioUso().format(fmtTime) : "-",
+                valorOuTraco(tm.getFrequenciaUso())));
     }
 
     private void desassociarMedicamento() {
         int idTratamento = lerInteiro("ID do tratamento: ");
         int idMedicamento = lerInteiro("ID do medicamento: ");
-        tratamentoMedicamentoService.desassociar(idTratamento, idMedicamento);
+        tratamentoService.desassociarMedicamento(idTratamento, idMedicamento);
         ok("Medicamento desassociado.");
+    }
+
+    private void imprimirTratamento(Tratamento tratamento) {
+        System.out.printf("  [%d] %s | Usuario: %s | Inicio: %s | Fim: %s | Status: %s%n",
+                tratamento.getIdTratamento(),
+                valorOuTraco(tratamento.getDescricao()),
+                tratamento.getUsuario().getNome(),
+                tratamento.getDataInicio() != null ? tratamento.getDataInicio().format(fmtDate) : "-",
+                tratamento.getDataFim() != null ? tratamento.getDataFim().format(fmtDate) : "-",
+                valorOuTraco(tratamento.getStatus()));
+    }
+
+    private void imprimirAlerta(Alerta alerta) {
+        System.out.printf("  [%d] %s | Tratamento: %d | Status: %s | Consumo: %s%n",
+                alerta.getIdAlerta(),
+                alerta.getDataHorarioAlerta().format(fmtDateTime),
+                alerta.getTratamento().getIdTratamento(),
+                alerta.getStatusAlerta(),
+                alerta.getConfirmacaoConsumo());
+    }
+
+    private QuantidadeTipo lerUnidadeMedida() {
+        System.out.println("Unidade de medida:");
+        QuantidadeTipo[] tipos = QuantidadeTipo.values();
+        for (int i = 0; i < tipos.length; i++) {
+            System.out.printf("  %d - %s%n", i + 1, tipos[i].name());
+        }
+        int idx = lerInteiro("Escolha: ") - 1;
+        if (idx < 0 || idx >= tipos.length) {
+            aviso("Opcao invalida. Usando UNIDADE.");
+            return QuantidadeTipo.UNIDADE;
+        }
+        return tipos[idx];
     }
 
     private String lerTexto(String prompt) {
@@ -579,6 +488,20 @@ public class App implements CommandLineRunner {
         }
     }
 
+    private LocalDate lerDataOpcional(String prompt) {
+        while (true) {
+            String valor = lerTextoOpcional(prompt);
+            if (valor.isBlank()) {
+                return null;
+            }
+            try {
+                return LocalDate.parse(valor, fmtDate);
+            } catch (DateTimeParseException e) {
+                aviso("Formato invalido. Use: dd/MM/yyyy");
+            }
+        }
+    }
+
     private LocalTime lerHorario(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -588,6 +511,10 @@ public class App implements CommandLineRunner {
                 aviso("Formato invalido. Use: HH:mm");
             }
         }
+    }
+
+    private String valorOuTraco(String valor) {
+        return valor == null || valor.isBlank() ? "-" : valor;
     }
 
     private void ok(String msg) {
