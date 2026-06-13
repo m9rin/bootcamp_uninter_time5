@@ -2,18 +2,17 @@ package br.uninter.medalerta.service;
 
 import br.uninter.medalerta.model.Medicamento;
 import br.uninter.medalerta.repository.MedicamentoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MedicamentoService {
 
     private final MedicamentoRepository medicamentoRepository;
 
-    public MedicamentoService(MedicamentoRepository medicamentoRepository) {
-        this.medicamentoRepository = medicamentoRepository;
-    }
 
     public Medicamento salvar(Medicamento medicamento) {
         return medicamentoRepository.save(medicamento);
@@ -24,12 +23,7 @@ public class MedicamentoService {
     }
 
     public Optional<Medicamento> buscarPorId(Integer id) {
-        Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
-        if (medicamento.isPresent()) {
-            return medicamento;
-        } else {
-            throw new RuntimeException("Medicamento não encontrado com id: " + id); 
-        }
+        return medicamentoRepository.findById(id);
     }
 
     public List<Medicamento> buscarPorNomeComercial(String nome) {
@@ -44,7 +38,7 @@ public class MedicamentoService {
         return medicamentoRepository.findById(id).map(medicamento -> {
             medicamento.setNomeComercial(dadosAtualizados.getNomeComercial());
             medicamento.setNomeGenerico(dadosAtualizados.getNomeGenerico());
-            medicamento.setQuantidade(dadosAtualizados.getQuantidade());
+            medicamento.setUnidadeMedida(dadosAtualizados.getUnidadeMedida());
             medicamento.setFormaUso(dadosAtualizados.getFormaUso());
             medicamento.setObservacao(dadosAtualizados.getObservacao());
             return medicamentoRepository.save(medicamento);

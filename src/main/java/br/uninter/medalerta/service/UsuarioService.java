@@ -2,18 +2,16 @@ package br.uninter.medalerta.service;
 
 import br.uninter.medalerta.model.Usuario;
 import br.uninter.medalerta.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
 
     public Usuario salvar(Usuario usuario) {
         return usuarioRepository.save(usuario);
@@ -24,12 +22,7 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> buscarPorId(Integer id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        if (usuario.isPresent()) {
-            return usuario;
-        } else {
-            throw new RuntimeException("Usuário não encontrado com id: " + id);
-        }
+        return usuarioRepository.findById(id);
     }
 
     public Usuario atualizar(Integer id, Usuario dadosAtualizados) {
