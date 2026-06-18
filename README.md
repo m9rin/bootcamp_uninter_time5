@@ -275,7 +275,7 @@ Em um ambiente de **produção real**, considere:
 | Lucas F. Santana  | [@lsprm](https://github.com/lsprm)                       |
 | David M. Sousa    | [@davidmaia](https://github.com/davidsmaia)              |
 | Leonardo Miorando | [@leonardomiorando](https://github.com/leonardomiorando) |
-| Bruna M. Linhares | -                                                        |
+| Bruna M. Linhares | [@brunameili](https://github.com/BrunaMeili)             |
 
 ### 👥 Professores Orientadores
 
